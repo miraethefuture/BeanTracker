@@ -1,0 +1,35 @@
+# macOS
+.DS_Store
+
+# Xcode
+DerivedData/
+build/
+*.xcuserstate
+*.xcscmblueprint
+*.xccheckout
+xcuserdata/
+
+# Swift Package Manager
+.build/
+Package.resolved
+
+# Tuist
+Tuist/.build/
+Tuist/Dependencies/
+Derived/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/
+fastlane/test_output/
+
+# CocoaPods
+Pods/
+
+# Ruby
+.bundle/
+
+# Local files
+.env
+.env.*
