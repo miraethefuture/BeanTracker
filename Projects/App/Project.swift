@@ -16,6 +16,14 @@ let project = Project(
                 with: [
                     "CFBundleDisplayName": .string("BeanTracker"),
                     "UILaunchScreen": .dictionary([:]),
+                    "CFBundleURLTypes": .array([
+                        .dictionary([
+                            "CFBundleURLName": .string("com.miraethefuture.BeanTracker"),
+                            "CFBundleURLSchemes": .array([
+                                .string("beantracker")
+                            ])
+                        ])
+                    ])
                 ]
             ),
             sources: ["Sources/**"],
