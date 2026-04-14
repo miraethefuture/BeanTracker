@@ -3,11 +3,16 @@
 
 # Xcode
 DerivedData/
+.derivedData/
 build/
 *.xcuserstate
 *.xcscmblueprint
 *.xccheckout
 xcuserdata/
+*.xcodeproj
+*.xcworkspace
+Projects/**/*.xcodeproj
+Projects/**/Derived/
 
 # Swift Package Manager
 .build/
