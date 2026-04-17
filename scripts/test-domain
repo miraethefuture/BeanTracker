@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$(cd -- "$(dirname -- "$0")" && pwd)/common.sh"
+
+require_command xcodebuild
+
+PROJECT_PATH="$REPO_ROOT/Projects/Domain/CoffeeDomain/CoffeeDomain.xcodeproj"
+RUN_DERIVED_DATA="$DERIVED_DATA_ROOT/domain"
+
+mkdir -p "$RUN_DERIVED_DATA"
+
+xcodebuild \
+    -project "$PROJECT_PATH" \
+    -scheme "CoffeeDomain" \
+    -derivedDataPath "$RUN_DERIVED_DATA" \
+    -destination "platform=iOS Simulator,name=$SIMULATOR_NAME" \
+    test

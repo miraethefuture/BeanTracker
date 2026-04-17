@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$(cd -- "$(dirname -- "$0")" && pwd)/common.sh"
+
+require_command tuist
+
+cd "$REPO_ROOT"
+tuist generate

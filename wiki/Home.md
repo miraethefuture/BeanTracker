@@ -1,24 +1,13 @@
 # BeanTracker Wiki
 
-## 개요
+이 디렉터리는 외부 공유를 위한 요약 레이어다.
 
-BeanTracker는 홈카페 사용자가 원두 소비를 빠르게 기록하고, 월별 절약액을 명확하게 확인할 수 있게 해주는 개인 대시보드 앱이다.
+정본 문서는 저장소의 [`docs/`](../docs/index.md)에 있다.
 
-## 문서 목록
+## 정본 문서
 
-- [PRD v2](PRD-v2.md)
-- [Tech Spec v2](Tech-Spec-v2.md)
-
-## 제품 핵심
-
-- 핵심 지표: 이번 달 절약액
-- 핵심 경험: 최소 입력 기록 + 즉시 보상
-- 출시 범위: iPhone, iPad, macOS
-- 언어 지원: 한국어, 영어
-
-## 핵심 루프
-
-1. 원두를 등록한다.
-2. 추출을 기록한다.
-3. 절약액이 증가하는 것을 확인한다.
-4. 월말에 월별 통계를 리뷰한다.
+- [`docs/index.md`](../docs/index.md)
+- [`docs/PRD-v2.md`](../docs/PRD-v2.md)
+- [`docs/Tech-Spec-v2.md`](../docs/Tech-Spec-v2.md)
+- [`docs/architecture.md`](../docs/architecture.md)
+- [`docs/quality-score.md`](../docs/quality-score.md)

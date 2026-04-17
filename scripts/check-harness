@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source "$(cd -- "$(dirname -- "$0")" && pwd)/common.sh"
+
+required_files=(
+    "AGENTS.md"
+    "README.md"
+    "docs/index.md"
+    "docs/architecture.md"
+    "docs/quality-score.md"
+    "docs/references/language-policy.md"
+    "docs/references/commands.md"
+    "docs/exec-plans/active/codex-harness-followups.md"
+    "docs/exec-plans/completed/2026-04-17-codex-harness-foundation.md"
+    "scripts/bootstrap"
+    "scripts/generate"
+    "scripts/test-domain"
+    "scripts/build-app"
+)
+
+for path in "${required_files[@]}"; do
+    if [[ ! -e "$REPO_ROOT/$path" ]]; then
+        echo "missing: $path" >&2
+        exit 1
+    fi
+done
+
+if ! grep -q "docs/" "$REPO_ROOT/AGENTS.md"; then
+    echo "error: AGENTS.md does not reference docs/" >&2
+    exit 1
+fi
+
+if ! grep -q "agent-facing docs default to English" "$REPO_ROOT/AGENTS.md"; then
+    echo "error: AGENTS.md should mention the language policy" >&2
+    exit 1
+fi
+
+if ! grep -q "source of truth" "$REPO_ROOT/README.md"; then
+    echo "error: README.md should describe the docs source of truth" >&2
+    exit 1
+fi
+
+echo "Harness docs and scripts look present."
