@@ -36,6 +36,28 @@ let project = Project(
                 .feature("SettingsFeature"),
                 .core("DatabaseClient"),
                 .external(name: "ComposableArchitecture"),
+                .target(name: "BeanTrackerWidgetExtension"),
+            ]
+        ),
+        .target(
+            name: "BeanTrackerWidgetExtension",
+            destinations: [.iPhone, .iPad],
+            product: .appExtension,
+            bundleId: "\(Constants.bundleIdPrefix).widget",
+            deploymentTargets: .iOS("17.0"),
+            infoPlist: .extendingDefault(
+                with: [
+                    "CFBundleDisplayName": .string("BeanTracker Widget"),
+                    "NSExtension": .dictionary([
+                        "NSExtensionPointIdentifier": .string("com.apple.widgetkit-extension")
+                    ])
+                ]
+            ),
+            sources: ["WidgetExtension/Sources/**"],
+            resources: ["WidgetExtension/Resources/**"],
+            dependencies: [
+                .domain("CoffeeDomain"),
+                .core("DatabaseClient")
             ]
         )
     ]
