@@ -11,8 +11,8 @@
 - 계산 로직은 `CoffeeDomain`에 둔다.
 - 상세 Preview 전략, 테스트 전략, SwiftData/CloudKit 계획은 정본 Tech Spec을 따른다.
 
-- Dashboard Hero는 이번 달 절약액
+- Dashboard Hero는 현재 활성 원두의 누적 잔 수
 - 빠른 추출 기록 기본값 로직
-- 월별 차트와 집계
+- 월별 총 잔 수 차트와 집계
 - 같은 Apple ID 기준 CloudKit 동기화
 - 소형 위젯에서 추출 기록 화면 딥링크

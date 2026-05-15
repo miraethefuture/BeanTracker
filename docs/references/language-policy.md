@@ -94,10 +94,10 @@ This avoids forcing full translation while still exposing hard constraints clear
 ## Practical Guidance
 
 - Good fit for English:
-  - "Run `scripts/test-domain` after changing savings logic."
+  - "Run `scripts/test-domain` after changing cup-count aggregation logic."
   - "Feature code must not import SwiftData directly."
 - Good fit for Korean:
-  - "사용자는 절약액 증가를 즉시 보상처럼 느껴야 한다."
+  - "사용자는 추출 직후 이 원두로 N잔째라는 보상을 느껴야 한다."
   - "원두 등록 흐름은 입력 피로보다 성취감을 먼저 만들어야 한다."
 
 ## Current Decision

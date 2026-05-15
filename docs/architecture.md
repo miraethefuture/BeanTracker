@@ -13,7 +13,7 @@ BeanTracker is organized around a small app shell with feature modules, a pure d
 
 - The intended dependency direction is `Feature -> Domain -> Core`.
 - Features should depend on `DatabaseClient`, not on persistence frameworks directly.
-- `CoffeeDomain` owns calculation logic such as savings, usage, purchase cost, and default selection rules.
+- `CoffeeDomain` owns calculation logic such as cup counts, usage, purchase cost, and default selection rules.
 - The app layer is responsible for wiring feature-to-feature refresh triggers.
 - Widgets should reuse shared domain/core code instead of re-implementing product logic.
 

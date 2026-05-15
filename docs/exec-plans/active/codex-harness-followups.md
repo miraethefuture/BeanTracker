@@ -2,11 +2,21 @@
 
 Status: active
 Owner: repository
-Updated: 2026-04-18
+Updated: 2026-05-16
 
 ## Goal
 
 Move BeanTracker from "documented for agents" to "self-validating for agents."
+
+## Product Pivot Note
+
+BeanTracker's product docs now center on active-bean cup counts and exhausted-bean total cups, not savings.
+
+This means:
+
+- dashboard validation should focus on current bean cup counts, monthly cup counts, and empty states
+- onboarding and settings no longer depend on standard cafe price flows
+- reducer tests and previews should be updated to match the cup-count product direction before broader persistence work
 
 ## Success Criteria
 
@@ -43,11 +53,11 @@ Why this comes first:
 
 Definition of done:
 
-- `OnboardingFeature`: save price happy path and invalid-input guard
-- `SettingsFeature`: update price happy path and invalid-input guard
+- `OnboardingFeature`: intro flow and first-bean handoff
+- `SettingsFeature`: settings surface no longer depends on standard cafe price state
 - `InventoryFeature`: save bean, delete bean, set exhausted
 - `BrewingLogFeature`: defaults load, save happy path, invalid-input guard
-- `DashboardFeature`: initial load and month navigation
+- `DashboardFeature`: current bean load, no-brew empty state, and month navigation
 
 ### Milestone 2: Feature Previews
 
@@ -107,25 +117,26 @@ Definition of done:
 
 ## Immediate Next Task
 
-Start with Milestone 1 and open a focused change for feature reducer tests.
+Start with the product-pivot implementation slice, then open a focused change for feature reducer tests.
 
 Recommended first slice:
 
-1. Add test targets for the feature modules that currently have none.
-2. Implement `OnboardingFeature` and `SettingsFeature` tests first because they are small and define the repository's test pattern.
-3. Extend the same pattern to `InventoryFeature`, `BrewingLogFeature`, and `DashboardFeature`.
+1. Replace savings-driven dashboard, onboarding, and settings behavior with cup-count-driven behavior.
+2. Update the feature test plan so it reflects the new onboarding intro flow and dashboard cup-count states.
+3. Extend the same validation pattern to `InventoryFeature`, `BrewingLogFeature`, and the updated `DashboardFeature`.
 
-This gives the repository a repeatable template before touching the larger persistence problem.
+This keeps the validation plan aligned with the product docs before touching the larger persistence problem.
 
 ## Work Items
 
-1. Add `TestStore` coverage for onboarding, inventory, brewing, dashboard, and settings reducers.
-2. Add feature previews backed by mock dependencies and fixture states.
-3. Implement a SwiftData-backed live `DatabaseClient`.
-4. Write down CloudKit sync expectations once the live adapter exists.
-5. Add a seeded smoke path covering onboarding -> bean creation -> brew log -> dashboard refresh.
-6. Promote the smoke path and domain tests into CI.
-7. Centralize user-facing strings and locale-sensitive formatting rules.
+1. Align dashboard, onboarding, settings, and domain docs with the cup-count product direction.
+2. Add `TestStore` coverage for onboarding, inventory, brewing, dashboard, and settings reducers.
+3. Add feature previews backed by mock dependencies and fixture states.
+4. Implement a SwiftData-backed live `DatabaseClient`.
+5. Write down CloudKit sync expectations once the live adapter exists.
+6. Add a seeded smoke path covering onboarding -> bean creation -> brew log -> dashboard refresh.
+7. Promote the smoke path and domain tests into CI.
+8. Centralize user-facing strings and locale-sensitive formatting rules.
 
 ## Notes
 
