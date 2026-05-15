@@ -43,7 +43,7 @@ let project = Project(
             name: "BeanTrackerWidgetExtension",
             destinations: [.iPhone, .iPad],
             product: .appExtension,
-            bundleId: "\(Constants.bundleIdPrefix).widget",
+            bundleId: "\(Constants.bundleIdPrefix).app.widget",
             deploymentTargets: .iOS("17.0"),
             infoPlist: .extendingDefault(
                 with: [
