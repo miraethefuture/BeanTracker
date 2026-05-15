@@ -9,7 +9,7 @@ public actor InMemoryDatabase {
 
     private var beans: [Bean]
     private var brewLogs: [BrewLog]
-    private var userPreference: UserPreference?
+    private var hasCompletedOnboarding: Bool
     private let calendar = Calendar(identifier: .gregorian)
 
     public init(seed: Seed) {
@@ -17,11 +17,11 @@ public actor InMemoryDatabase {
         case .empty:
             self.beans = []
             self.brewLogs = []
-            self.userPreference = nil
+            self.hasCompletedOnboarding = false
         case .preview:
             self.beans = CoffeeFixtures.sampleBeans()
             self.brewLogs = CoffeeFixtures.sampleBrewLogs()
-            self.userPreference = CoffeeFixtures.samplePreference()
+            self.hasCompletedOnboarding = true
         }
     }
 
@@ -34,11 +34,9 @@ public actor InMemoryDatabase {
         return DashboardSnapshot(
             month: month,
             monthLabel: formatter.string(from: month),
-            monthlySavings: CoffeeCalculations.monthlySavings(
+            monthlyCupCount: CoffeeCalculations.monthlyCupCount(
                 month: month,
                 brewLogs: brewLogs,
-                beans: beans,
-                standardCafePrice: userPreference?.standardCafePrice ?? 4_500,
                 calendar: calendar
             ),
             monthlyBeanUsage: CoffeeCalculations.monthlyBeanUsage(
@@ -51,6 +49,10 @@ public actor InMemoryDatabase {
                 beans: beans,
                 calendar: calendar
             ),
+            currentBeanSummary: CoffeeCalculations.beanConsumptionSummary(
+                for: currentBean,
+                brewLogs: brewLogs
+            ),
             currentBeanStatus: CoffeeCalculations.currentBeanStatus(
                 for: currentBean,
                 brewLogs: brewLogs
@@ -59,8 +61,6 @@ public actor InMemoryDatabase {
                 endingAt: month,
                 monthCount: 6,
                 brewLogs: brewLogs,
-                beans: beans,
-                standardCafePrice: userPreference?.standardCafePrice ?? 4_500,
                 calendar: calendar
             )
         )
@@ -75,31 +75,30 @@ public actor InMemoryDatabase {
 
     public func fetchInventory() -> InventorySnapshot {
         InventorySnapshot(
-            activeBeans: beans.filter { !$0.isExhausted }.sorted(by: { $0.createdAt > $1.createdAt }),
-            exhaustedBeans: beans.filter(\.isExhausted).sorted(by: { $0.createdAt > $1.createdAt })
+            activeBeans: inventorySummaries(for: beans.filter { !$0.isExhausted }),
+            exhaustedBeans: inventorySummaries(for: beans.filter(\.isExhausted))
         )
     }
 
-    public func fetchUserPreference() -> UserPreference? {
-        userPreference
+    public func fetchHasCompletedOnboarding() -> Bool {
+        hasCompletedOnboarding
     }
 
-    public func saveUserPreference(standardCafePrice: Int) {
-        if var userPreference {
-            userPreference.standardCafePrice = standardCafePrice
-            userPreference.updatedAt = .now
-            self.userPreference = userPreference
-        } else {
-            userPreference = UserPreference(standardCafePrice: standardCafePrice)
-        }
+    public func completeOnboarding() {
+        hasCompletedOnboarding = true
     }
 
     public func saveBean(_ bean: Bean) {
         beans.insert(bean, at: 0)
     }
 
-    public func addBrewLog(_ brewLog: BrewLog) {
+    public func addBrewLog(_ brewLog: BrewLog) -> BrewSaveResult {
         brewLogs.insert(brewLog, at: 0)
+
+        let beanName = beans.first(where: { $0.id == brewLog.beanId })?.name ?? "이 원두"
+        let cupCount = CoffeeCalculations.beanCupCount(for: brewLog.beanId, brewLogs: brewLogs)
+
+        return BrewSaveResult(beanName: beanName, cupCount: cupCount)
     }
 
     public func deleteBean(id: UUID) {
@@ -117,16 +116,20 @@ public actor InMemoryDatabase {
     }
 
     private func currentBean() -> Bean? {
-        let activeBeans = beans.filter { !$0.isExhausted }
-        let recentBeanID = brewLogs
-            .sorted(by: { $0.date > $1.date })
-            .first(where: { log in activeBeans.contains(where: { $0.id == log.beanId }) })?
-            .beanId
+        CoffeeCalculations.currentActiveBean(
+            activeBeans: beans.filter { !$0.isExhausted },
+            brewLogs: brewLogs
+        )
+    }
 
-        if let recentBeanID {
-            return activeBeans.first(where: { $0.id == recentBeanID })
-        }
-
-        return activeBeans.sorted(by: { $0.createdAt > $1.createdAt }).first
+    private func inventorySummaries(for beans: [Bean]) -> [InventoryBeanSummary] {
+        beans
+            .sorted(by: { $0.createdAt > $1.createdAt })
+            .map { bean in
+                InventoryBeanSummary(
+                    bean: bean,
+                    cupCount: CoffeeCalculations.beanCupCount(for: bean.id, brewLogs: brewLogs)
+                )
+            }
     }
 }

@@ -1,56 +1,22 @@
 import ComposableArchitecture
-import DatabaseClient
 import SwiftUI
 
 @Reducer
 public struct SettingsFeature {
     public struct State: Equatable {
-        public var standardCafePrice: String
-        public var isSaving: Bool
-
-        public init(standardCafePrice: String = "4500", isSaving: Bool = false) {
-            self.standardCafePrice = standardCafePrice
-            self.isSaving = isSaving
-        }
+        public init() {}
     }
 
     public enum Action: Equatable {
-        case standardCafePriceChanged(String)
-        case saveButtonTapped
-        case saveCompleted(Int)
-        case delegate(Delegate)
+        case none
     }
-
-    public enum Delegate: Equatable {
-        case didUpdatePreference(Int)
-    }
-
-    @Dependency(\.databaseClient) var databaseClient
 
     public init() {}
 
     public var body: some ReducerOf<Self> {
-        Reduce { state, action in
+        Reduce { _, action in
             switch action {
-            case let .standardCafePriceChanged(value):
-                state.standardCafePrice = value
-                return .none
-
-            case .saveButtonTapped:
-                guard let price = Int(state.standardCafePrice) else { return .none }
-                state.isSaving = true
-                let databaseClient = self.databaseClient
-
-                return .run { send in
-                    try await databaseClient.saveUserPreference(price)
-                    await send(.saveCompleted(price))
-                }
-
-            case let .saveCompleted(price):
-                state.isSaving = false
-                return .send(.delegate(.didUpdatePreference(price)))
-
-            case .delegate:
+            case .none:
                 return .none
             }
         }
@@ -67,24 +33,9 @@ public struct SettingsView: View {
     public var body: some View {
         WithViewStore(store, observe: { $0 }) { viewStore in
             Form {
-                Section("기준 카페 가격") {
-                    TextField(
-                        "예: 4500",
-                        text: viewStore.binding(
-                            get: \.standardCafePrice,
-                            send: SettingsFeature.Action.standardCafePriceChanged
-                        )
-                    )
-
-                    Button(action: { viewStore.send(.saveButtonTapped) }) {
-                        if viewStore.isSaving {
-                            ProgressView()
-                        } else {
-                            Text("저장")
-                                .frame(maxWidth: .infinity)
-                        }
-                    }
-                    .buttonStyle(.borderedProminent)
+                Section("앱 정보") {
+                    Text("현재 단계에서는 원두별 잔 수 추적과 홈카페 루틴 기록 경험을 우선 정리하고 있습니다.")
+                        .foregroundStyle(.secondary)
                 }
 
                 Section("구현 메모") {

@@ -1,50 +1,19 @@
 import Foundation
 
 public enum CoffeeCalculations {
-    public static func brewCost(
-        beanPrice: Int,
-        totalWeight: Double,
-        usedWeight: Double
-    ) -> Double {
-        guard totalWeight > 0 else { return 0 }
-        return (Double(beanPrice) / totalWeight) * usedWeight
-    }
-
-    public static func brewSavings(
-        standardCafePrice: Int,
-        beanPrice: Int,
-        totalWeight: Double,
-        usedWeight: Double
+    public static func beanCupCount(
+        for beanID: UUID,
+        brewLogs: [BrewLog]
     ) -> Int {
-        let savings = Double(standardCafePrice) - brewCost(
-            beanPrice: beanPrice,
-            totalWeight: totalWeight,
-            usedWeight: usedWeight
-        )
-        return Int(savings.rounded())
+        brewLogs.filter { $0.beanId == beanID }.count
     }
 
-    public static func monthlySavings(
+    public static func monthlyCupCount(
         month: Date,
         brewLogs: [BrewLog],
-        beans: [Bean],
-        standardCafePrice: Int,
         calendar: Calendar = .current
     ) -> Int {
-        let beansByID = Dictionary(uniqueKeysWithValues: beans.map { ($0.id, $0) })
-
-        return brewLogs
-            .filter { calendar.isDate($0.date, equalTo: month, toGranularity: .month) }
-            .reduce(0) { partialResult, log in
-                guard let bean = beansByID[log.beanId] else { return partialResult }
-
-                return partialResult + brewSavings(
-                    standardCafePrice: standardCafePrice,
-                    beanPrice: bean.price,
-                    totalWeight: bean.totalWeight,
-                    usedWeight: log.usedWeight
-                )
-            }
+        brewLogs.filter { calendar.isDate($0.date, equalTo: month, toGranularity: .month) }.count
     }
 
     public static func monthlyBeanUsage(
@@ -105,12 +74,39 @@ public enum CoffeeCalculations {
         )
     }
 
+    public static func currentActiveBean(
+        activeBeans: [Bean],
+        brewLogs: [BrewLog]
+    ) -> Bean? {
+        let recentBeanID = brewLogs
+            .sorted(by: { $0.date > $1.date })
+            .first(where: { log in activeBeans.contains(where: { $0.id == log.beanId }) })?
+            .beanId
+
+        if let recentBeanID {
+            return activeBeans.first(where: { $0.id == recentBeanID })
+        }
+
+        return activeBeans.sorted(by: { $0.createdAt > $1.createdAt }).first
+    }
+
+    public static func beanConsumptionSummary(
+        for bean: Bean?,
+        brewLogs: [BrewLog]
+    ) -> BeanConsumptionSummary? {
+        guard let bean else { return nil }
+
+        return BeanConsumptionSummary(
+            beanID: bean.id,
+            beanName: bean.name,
+            cupCount: beanCupCount(for: bean.id, brewLogs: brewLogs)
+        )
+    }
+
     public static func chartEntries(
         endingAt month: Date,
         monthCount: Int,
         brewLogs: [BrewLog],
-        beans: [Bean],
-        standardCafePrice: Int,
         calendar: Calendar = .current
     ) -> [DashboardChartEntry] {
         guard monthCount > 0 else { return [] }
@@ -122,11 +118,9 @@ public enum CoffeeCalculations {
 
             return DashboardChartEntry(
                 month: chartMonth,
-                savings: monthlySavings(
+                cupCount: monthlyCupCount(
                     month: chartMonth,
                     brewLogs: brewLogs,
-                    beans: beans,
-                    standardCafePrice: standardCafePrice,
                     calendar: calendar
                 )
             )

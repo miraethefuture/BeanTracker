@@ -8,9 +8,17 @@ import SettingsFeature
 
 @Reducer
 struct AppFeature {
+    enum Tab: Hashable {
+        case dashboard
+        case brewing
+        case inventory
+        case settings
+    }
+
     struct State: Equatable {
         var isBootstrapping = true
         var hasCompletedOnboarding = false
+        var selectedTab: Tab = .dashboard
         var dashboard = DashboardFeature.State()
         var brewingLog = BrewingLogFeature.State()
         var inventory = InventoryFeature.State()
@@ -20,7 +28,8 @@ struct AppFeature {
 
     enum Action: Equatable {
         case task
-        case bootstrapResponse(Int?)
+        case bootstrapResponse(Bool)
+        case selectedTabChanged(Tab)
         case dashboard(DashboardFeature.Action)
         case brewingLog(BrewingLogFeature.Action)
         case inventory(InventoryFeature.Action)
@@ -54,19 +63,13 @@ struct AppFeature {
                 let databaseClient = self.databaseClient
 
                 return .run { send in
-                    let preference = try await databaseClient.fetchUserPreference()
-                    await send(.bootstrapResponse(preference?.standardCafePrice))
+                    let hasCompletedOnboarding = try await databaseClient.fetchHasCompletedOnboarding()
+                    await send(.bootstrapResponse(hasCompletedOnboarding))
                 }
 
-            case let .bootstrapResponse(standardCafePrice):
+            case let .bootstrapResponse(hasCompletedOnboarding):
                 state.isBootstrapping = false
-                state.hasCompletedOnboarding = standardCafePrice != nil
-
-                if let standardCafePrice {
-                    let priceString = String(standardCafePrice)
-                    state.onboarding.standardCafePrice = priceString
-                    state.settings.standardCafePrice = priceString
-                }
+                state.hasCompletedOnboarding = hasCompletedOnboarding
 
                 return .merge(
                     .send(.dashboard(.task)),
@@ -74,19 +77,21 @@ struct AppFeature {
                     .send(.inventory(.task))
                 )
 
-            case let .onboarding(.delegate(.didSavePreference(price))):
+            case .selectedTabChanged(let tab):
+                state.selectedTab = tab
+                return .none
+
+            case .onboarding(.delegate(.didFinishOnboarding)):
                 state.hasCompletedOnboarding = true
-                state.settings.standardCafePrice = String(price)
+                state.selectedTab = .inventory
+                let databaseClient = self.databaseClient
 
-                return .merge(
-                    .send(.dashboard(.task)),
-                    .send(.brewingLog(.task)),
-                    .send(.inventory(.task))
-                )
-
-            case let .settings(.delegate(.didUpdatePreference(price))):
-                state.onboarding.standardCafePrice = String(price)
-                return .send(.dashboard(.task))
+                return .run { send in
+                    try await databaseClient.completeOnboarding()
+                    await send(.dashboard(.task))
+                    await send(.brewingLog(.task))
+                    await send(.inventory(.task))
+                }
 
             case .brewingLog(.delegate(.didSaveBrew)):
                 return .merge(

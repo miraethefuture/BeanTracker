@@ -33,7 +33,7 @@ public struct BrewingLogFeature {
         case selectedBeanChanged(UUID?)
         case usedWeightChanged(String)
         case saveButtonTapped
-        case saveCompleted
+        case saveCompleted(BrewSaveResult)
         case delegate(Delegate)
     }
 
@@ -79,19 +79,19 @@ public struct BrewingLogFeature {
                 let databaseClient = self.databaseClient
 
                 return .run { send in
-                    try await databaseClient.addBrewLog(
+                    let result = try await databaseClient.addBrewLog(
                         BrewLog(
                             beanId: selectedBeanID,
                             usedWeight: usedWeight,
                             date: .now
                         )
                     )
-                    await send(.saveCompleted)
+                    await send(.saveCompleted(result))
                 }
 
-            case .saveCompleted:
+            case let .saveCompleted(result):
                 state.isSaving = false
-                state.saveMessage = "추출을 기록했어요."
+                state.saveMessage = "\(result.beanName)로 \(result.cupCount)잔째예요."
 
                 return .merge(
                     .send(.delegate(.didSaveBrew)),

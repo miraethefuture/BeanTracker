@@ -53,25 +53,6 @@ public struct BrewLog: Equatable, Identifiable, Sendable {
     }
 }
 
-public struct UserPreference: Equatable, Identifiable, Sendable {
-    public let id: UUID
-    public var standardCafePrice: Int
-    public let createdAt: Date
-    public var updatedAt: Date
-
-    public init(
-        id: UUID = UUID(),
-        standardCafePrice: Int,
-        createdAt: Date = .now,
-        updatedAt: Date = .now
-    ) {
-        self.id = id
-        self.standardCafePrice = standardCafePrice
-        self.createdAt = createdAt
-        self.updatedAt = updatedAt
-    }
-}
-
 public struct CurrentBeanStatus: Equatable, Sendable {
     public let beanName: String
     public let remainingWeight: Double
@@ -91,41 +72,56 @@ public struct CurrentBeanStatus: Equatable, Sendable {
     }
 }
 
+public struct BeanConsumptionSummary: Equatable, Sendable {
+    public let beanID: UUID
+    public let beanName: String
+    public let cupCount: Int
+
+    public init(beanID: UUID, beanName: String, cupCount: Int) {
+        self.beanID = beanID
+        self.beanName = beanName
+        self.cupCount = cupCount
+    }
+}
+
 public struct DashboardChartEntry: Equatable, Identifiable, Sendable {
     public let id: Date
     public let month: Date
-    public let savings: Int
+    public let cupCount: Int
 
-    public init(month: Date, savings: Int) {
+    public init(month: Date, cupCount: Int) {
         self.id = month
         self.month = month
-        self.savings = savings
+        self.cupCount = cupCount
     }
 }
 
 public struct DashboardSnapshot: Equatable, Sendable {
     public let month: Date
     public let monthLabel: String
-    public let monthlySavings: Int
+    public let monthlyCupCount: Int
     public let monthlyBeanUsage: Double
     public let monthlyPurchaseCost: Int
+    public let currentBeanSummary: BeanConsumptionSummary?
     public let currentBeanStatus: CurrentBeanStatus?
     public let chartEntries: [DashboardChartEntry]
 
     public init(
         month: Date,
         monthLabel: String,
-        monthlySavings: Int,
+        monthlyCupCount: Int,
         monthlyBeanUsage: Double,
         monthlyPurchaseCost: Int,
+        currentBeanSummary: BeanConsumptionSummary?,
         currentBeanStatus: CurrentBeanStatus?,
         chartEntries: [DashboardChartEntry]
     ) {
         self.month = month
         self.monthLabel = monthLabel
-        self.monthlySavings = monthlySavings
+        self.monthlyCupCount = monthlyCupCount
         self.monthlyBeanUsage = monthlyBeanUsage
         self.monthlyPurchaseCost = monthlyPurchaseCost
+        self.currentBeanSummary = currentBeanSummary
         self.currentBeanStatus = currentBeanStatus
         self.chartEntries = chartEntries
     }
@@ -143,12 +139,34 @@ public struct BrewDefaults: Equatable, Sendable {
     }
 }
 
-public struct InventorySnapshot: Equatable, Sendable {
-    public let activeBeans: [Bean]
-    public let exhaustedBeans: [Bean]
+public struct InventoryBeanSummary: Equatable, Identifiable, Sendable {
+    public let bean: Bean
+    public let cupCount: Int
 
-    public init(activeBeans: [Bean], exhaustedBeans: [Bean]) {
+    public var id: UUID { bean.id }
+
+    public init(bean: Bean, cupCount: Int) {
+        self.bean = bean
+        self.cupCount = cupCount
+    }
+}
+
+public struct InventorySnapshot: Equatable, Sendable {
+    public let activeBeans: [InventoryBeanSummary]
+    public let exhaustedBeans: [InventoryBeanSummary]
+
+    public init(activeBeans: [InventoryBeanSummary], exhaustedBeans: [InventoryBeanSummary]) {
         self.activeBeans = activeBeans
         self.exhaustedBeans = exhaustedBeans
+    }
+}
+
+public struct BrewSaveResult: Equatable, Sendable {
+    public let beanName: String
+    public let cupCount: Int
+
+    public init(beanName: String, cupCount: Int) {
+        self.beanName = beanName
+        self.cupCount = cupCount
     }
 }

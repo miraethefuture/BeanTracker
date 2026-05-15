@@ -6,10 +6,10 @@ public struct DatabaseClient: Sendable {
     public var fetchDashboard: @Sendable (_ month: Date) async throws -> DashboardSnapshot
     public var fetchBrewingDefaults: @Sendable () async throws -> BrewDefaults
     public var fetchInventory: @Sendable () async throws -> InventorySnapshot
-    public var fetchUserPreference: @Sendable () async throws -> UserPreference?
-    public var saveUserPreference: @Sendable (_ standardCafePrice: Int) async throws -> Void
+    public var fetchHasCompletedOnboarding: @Sendable () async throws -> Bool
+    public var completeOnboarding: @Sendable () async throws -> Void
     public var saveBean: @Sendable (_ bean: Bean) async throws -> Void
-    public var addBrewLog: @Sendable (_ brewLog: BrewLog) async throws -> Void
+    public var addBrewLog: @Sendable (_ brewLog: BrewLog) async throws -> BrewSaveResult
     public var deleteBean: @Sendable (_ beanID: UUID) async throws -> Void
     public var deleteBrewLog: @Sendable (_ brewLogID: UUID) async throws -> Void
     public var setBeanExhausted: @Sendable (_ beanID: UUID, _ isExhausted: Bool) async throws -> Void
@@ -18,10 +18,10 @@ public struct DatabaseClient: Sendable {
         fetchDashboard: @escaping @Sendable (_ month: Date) async throws -> DashboardSnapshot,
         fetchBrewingDefaults: @escaping @Sendable () async throws -> BrewDefaults,
         fetchInventory: @escaping @Sendable () async throws -> InventorySnapshot,
-        fetchUserPreference: @escaping @Sendable () async throws -> UserPreference?,
-        saveUserPreference: @escaping @Sendable (_ standardCafePrice: Int) async throws -> Void,
+        fetchHasCompletedOnboarding: @escaping @Sendable () async throws -> Bool,
+        completeOnboarding: @escaping @Sendable () async throws -> Void,
         saveBean: @escaping @Sendable (_ bean: Bean) async throws -> Void,
-        addBrewLog: @escaping @Sendable (_ brewLog: BrewLog) async throws -> Void,
+        addBrewLog: @escaping @Sendable (_ brewLog: BrewLog) async throws -> BrewSaveResult,
         deleteBean: @escaping @Sendable (_ beanID: UUID) async throws -> Void,
         deleteBrewLog: @escaping @Sendable (_ brewLogID: UUID) async throws -> Void,
         setBeanExhausted: @escaping @Sendable (_ beanID: UUID, _ isExhausted: Bool) async throws -> Void
@@ -29,8 +29,8 @@ public struct DatabaseClient: Sendable {
         self.fetchDashboard = fetchDashboard
         self.fetchBrewingDefaults = fetchBrewingDefaults
         self.fetchInventory = fetchInventory
-        self.fetchUserPreference = fetchUserPreference
-        self.saveUserPreference = saveUserPreference
+        self.fetchHasCompletedOnboarding = fetchHasCompletedOnboarding
+        self.completeOnboarding = completeOnboarding
         self.saveBean = saveBean
         self.addBrewLog = addBrewLog
         self.deleteBean = deleteBean
@@ -59,14 +59,26 @@ extension DatabaseClient: DependencyKey {
         fetchInventory: {
             let beans = CoffeeFixtures.sampleBeans()
             return InventorySnapshot(
-                activeBeans: beans.filter { !$0.isExhausted },
-                exhaustedBeans: beans.filter(\.isExhausted)
+                activeBeans: beans.filter { !$0.isExhausted }.map {
+                    InventoryBeanSummary(
+                        bean: $0,
+                        cupCount: CoffeeCalculations.beanCupCount(for: $0.id, brewLogs: CoffeeFixtures.sampleBrewLogs())
+                    )
+                },
+                exhaustedBeans: beans.filter(\.isExhausted).map {
+                    InventoryBeanSummary(
+                        bean: $0,
+                        cupCount: CoffeeCalculations.beanCupCount(for: $0.id, brewLogs: CoffeeFixtures.sampleBrewLogs())
+                    )
+                }
             )
         },
-        fetchUserPreference: { CoffeeFixtures.samplePreference() },
-        saveUserPreference: { _ in },
+        fetchHasCompletedOnboarding: { true },
+        completeOnboarding: { },
         saveBean: { _ in },
-        addBrewLog: { _ in },
+        addBrewLog: { _ in
+            BrewSaveResult(beanName: "에티오피아 예가체프", cupCount: 4)
+        },
         deleteBean: { _ in },
         deleteBrewLog: { _ in },
         setBeanExhausted: { _, _ in }
@@ -96,11 +108,11 @@ public extension DatabaseClient {
             fetchInventory: {
                 await database.fetchInventory()
             },
-            fetchUserPreference: {
-                await database.fetchUserPreference()
+            fetchHasCompletedOnboarding: {
+                await database.fetchHasCompletedOnboarding()
             },
-            saveUserPreference: { standardCafePrice in
-                await database.saveUserPreference(standardCafePrice: standardCafePrice)
+            completeOnboarding: {
+                await database.completeOnboarding()
             },
             saveBean: { bean in
                 await database.saveBean(bean)

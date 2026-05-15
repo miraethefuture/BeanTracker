@@ -3,15 +3,15 @@ import XCTest
 @testable import CoffeeDomain
 
 final class CoffeeCalculationsTests: XCTestCase {
-    func testBrewSavingsUsesUsedWeight() {
-        let savings = CoffeeCalculations.brewSavings(
-            standardCafePrice: 1_700,
-            beanPrice: 1_000,
-            totalWeight: 100,
-            usedWeight: 10
-        )
+    func testBeanCupCountCountsLogsForMatchingBeanOnly() {
+        let now = Date(timeIntervalSince1970: 1_744_588_800)
+        let beans = CoffeeFixtures.sampleBeans(now: now)
+        let brewLogs = CoffeeFixtures.sampleBrewLogs(now: now)
 
-        XCTAssertEqual(savings, 1_600)
+        XCTAssertEqual(
+            CoffeeCalculations.beanCupCount(for: beans[0].id, brewLogs: brewLogs),
+            3
+        )
     }
 
     func testMonthlyBeanPurchaseCostCountsOnlySelectedMonth() {
@@ -31,6 +31,17 @@ final class CoffeeCalculationsTests: XCTestCase {
         )
     }
 
+    func testMonthlyCupCountCountsOnlySelectedMonthLogs() {
+        let now = Date(timeIntervalSince1970: 1_744_588_800)
+        let calendar = Calendar(identifier: .gregorian)
+        let brewLogs = CoffeeFixtures.sampleBrewLogs(now: now)
+
+        XCTAssertEqual(
+            CoffeeCalculations.monthlyCupCount(month: now, brewLogs: brewLogs, calendar: calendar),
+            3
+        )
+    }
+
     func testBrewingDefaultsPreferMostRecentActiveBean() {
         let now = Date(timeIntervalSince1970: 1_744_588_800)
         let beans = CoffeeFixtures.sampleBeans(now: now).map { bean -> Bean in
@@ -44,5 +55,15 @@ final class CoffeeCalculationsTests: XCTestCase {
 
         XCTAssertEqual(defaults.selectedBeanID, brewLogs.sorted(by: { $0.date > $1.date }).first?.beanId)
         XCTAssertEqual(defaults.usedWeight, 21)
+    }
+
+    func testCurrentActiveBeanFallsBackToMostRecentActiveBeanWhenNoBrewsExist() {
+        let now = Date(timeIntervalSince1970: 1_744_588_800)
+        let beans = CoffeeFixtures.sampleBeans(now: now).filter { !$0.isExhausted }
+
+        XCTAssertEqual(
+            CoffeeCalculations.currentActiveBean(activeBeans: beans, brewLogs: []),
+            beans.sorted(by: { $0.createdAt > $1.createdAt }).first
+        )
     }
 }

@@ -63,23 +63,16 @@ public enum CoffeeFixtures {
         ]
     }
 
-    public static func samplePreference(now: Date = .now) -> UserPreference {
-        UserPreference(
-            id: UUID(uuidString: "CCCCCCCC-BBBB-CCCC-DDDD-EEEEEEEEEEE1") ?? UUID(),
-            standardCafePrice: 4_500,
-            createdAt: now,
-            updatedAt: now
-        )
-    }
-
     public static func sampleDashboardSnapshot(
         month: Date = .now,
         calendar: Calendar = .current
     ) -> DashboardSnapshot {
         let beans = sampleBeans(now: month)
         let brewLogs = sampleBrewLogs(now: month)
-        let preference = samplePreference(now: month)
-        let currentBean = beans.first(where: { !$0.isExhausted })
+        let currentBean = CoffeeCalculations.currentActiveBean(
+            activeBeans: beans.filter { !$0.isExhausted },
+            brewLogs: brewLogs
+        )
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
         formatter.dateFormat = "yyyy년 M월"
@@ -87,11 +80,9 @@ public enum CoffeeFixtures {
         return DashboardSnapshot(
             month: month,
             monthLabel: formatter.string(from: month),
-            monthlySavings: CoffeeCalculations.monthlySavings(
+            monthlyCupCount: CoffeeCalculations.monthlyCupCount(
                 month: month,
                 brewLogs: brewLogs,
-                beans: beans,
-                standardCafePrice: preference.standardCafePrice,
                 calendar: calendar
             ),
             monthlyBeanUsage: CoffeeCalculations.monthlyBeanUsage(
@@ -104,6 +95,10 @@ public enum CoffeeFixtures {
                 beans: beans,
                 calendar: calendar
             ),
+            currentBeanSummary: CoffeeCalculations.beanConsumptionSummary(
+                for: currentBean,
+                brewLogs: brewLogs
+            ),
             currentBeanStatus: CoffeeCalculations.currentBeanStatus(
                 for: currentBean,
                 brewLogs: brewLogs
@@ -112,8 +107,6 @@ public enum CoffeeFixtures {
                 endingAt: month,
                 monthCount: 6,
                 brewLogs: brewLogs,
-                beans: beans,
-                standardCafePrice: preference.standardCafePrice,
                 calendar: calendar
             )
         )

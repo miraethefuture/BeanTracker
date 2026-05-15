@@ -10,17 +10,23 @@ struct AppView: View {
     let store: StoreOf<AppFeature>
 
     var body: some View {
-        WithViewStore(store, observe: { ViewState(state: $0) }) { viewStore in
+        WithViewStore(store, observe: { $0 }) { viewStore in
             Group {
                 if viewStore.isBootstrapping {
                     ProgressView("BeanTracker 준비 중")
                 } else if viewStore.hasCompletedOnboarding {
-                    TabView {
+                    TabView(
+                        selection: viewStore.binding(
+                            get: \.selectedTab,
+                            send: AppFeature.Action.selectedTabChanged
+                        )
+                    ) {
                         NavigationStack {
                             DashboardView(
                                 store: store.scope(state: \.dashboard, action: \.dashboard)
                             )
                         }
+                        .tag(AppFeature.Tab.dashboard)
                         .tabItem {
                             Label("대시보드", systemImage: "chart.bar.xaxis")
                         }
@@ -30,6 +36,7 @@ struct AppView: View {
                                 store: store.scope(state: \.brewingLog, action: \.brewingLog)
                             )
                         }
+                        .tag(AppFeature.Tab.brewing)
                         .tabItem {
                             Label("커피 내리기", systemImage: "cup.and.saucer")
                         }
@@ -39,6 +46,7 @@ struct AppView: View {
                                 store: store.scope(state: \.inventory, action: \.inventory)
                             )
                         }
+                        .tag(AppFeature.Tab.inventory)
                         .tabItem {
                             Label("원두 창고", systemImage: "shippingbox")
                         }
@@ -48,6 +56,7 @@ struct AppView: View {
                                 store: store.scope(state: \.settings, action: \.settings)
                             )
                         }
+                        .tag(AppFeature.Tab.settings)
                         .tabItem {
                             Label("설정", systemImage: "gearshape")
                         }
@@ -64,15 +73,5 @@ struct AppView: View {
                 await viewStore.send(.task).finish()
             }
         }
-    }
-}
-
-private struct ViewState: Equatable {
-    let isBootstrapping: Bool
-    let hasCompletedOnboarding: Bool
-
-    init(state: AppFeature.State) {
-        self.isBootstrapping = state.isBootstrapping
-        self.hasCompletedOnboarding = state.hasCompletedOnboarding
     }
 }
