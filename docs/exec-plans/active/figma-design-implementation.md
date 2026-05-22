@@ -45,7 +45,7 @@ Definition of done:
 
 ### Slice 2: Brewing Visual Pass
 
-Status: implemented, awaiting maintainer review/commit
+Status: committed in `50391d0`
 
 Scope:
 
@@ -61,7 +61,7 @@ Definition of done:
 
 ### Slice 3: Inventory Visual Pass
 
-Status: pending
+Status: implemented, awaiting maintainer review/commit
 
 Scope:
 
@@ -107,7 +107,7 @@ Definition of done:
 
 ## Current Checkpoint
 
-Slice 2 is implemented. Stop here so the maintainer can review and commit before moving to Slice 3.
+Slice 3 is implemented. Stop here so the maintainer can review and commit before moving to Slice 4.
 
 Validation:
 
@@ -119,3 +119,10 @@ Validation:
   - `scripts/check-harness`
   - `git diff --check`
   - `xcodebuild -workspace BeanTracker.xcworkspace -scheme BeanTrackerApp -derivedDataPath .derivedData/codex/app -destination generic/platform=iOS CODE_SIGNING_ALLOWED=NO build`
+- Slice 3 validation passed:
+  - `git diff --check`
+  - `xcodebuild -workspace BeanTracker.xcworkspace -scheme BeanTrackerApp -derivedDataPath .derivedData/codex/app -destination generic/platform=iOS CODE_SIGNING_ALLOWED=NO build`
+
+Notes:
+
+- Slice 3 keeps `InventoryBeanSummary` unchanged. The current card progress bar is a visual estimate based on cup count and total weight because the inventory snapshot does not yet expose exact used weight or remaining weight.
