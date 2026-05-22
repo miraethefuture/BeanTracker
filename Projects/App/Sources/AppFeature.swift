@@ -4,7 +4,6 @@ import DashboardFeature
 import DatabaseClient
 import InventoryFeature
 import OnboardingFeature
-import SettingsFeature
 
 @Reducer
 struct AppFeature {
@@ -12,7 +11,6 @@ struct AppFeature {
         case dashboard
         case brewing
         case inventory
-        case settings
     }
 
     struct State: Equatable {
@@ -23,7 +21,6 @@ struct AppFeature {
         var brewingLog = BrewingLogFeature.State()
         var inventory = InventoryFeature.State()
         var onboarding = OnboardingFeature.State()
-        var settings = SettingsFeature.State()
     }
 
     enum Action: Equatable {
@@ -34,7 +31,6 @@ struct AppFeature {
         case brewingLog(BrewingLogFeature.Action)
         case inventory(InventoryFeature.Action)
         case onboarding(OnboardingFeature.Action)
-        case settings(SettingsFeature.Action)
     }
 
     @Dependency(\.databaseClient) var databaseClient
@@ -51,9 +47,6 @@ struct AppFeature {
         }
         Scope(state: \.onboarding, action: \.onboarding) {
             OnboardingFeature()
-        }
-        Scope(state: \.settings, action: \.settings) {
-            SettingsFeature()
         }
 
         Reduce { state, action in
@@ -106,7 +99,7 @@ struct AppFeature {
                     .send(.inventory(.task))
                 )
 
-            case .dashboard, .brewingLog, .inventory, .onboarding, .settings:
+            case .dashboard, .brewingLog, .inventory, .onboarding:
                 return .none
             }
         }

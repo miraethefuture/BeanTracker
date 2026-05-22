@@ -33,7 +33,6 @@ let project = Project(
                 .feature("BrewingLogFeature"),
                 .feature("InventoryFeature"),
                 .feature("OnboardingFeature"),
-                .feature("SettingsFeature"),
                 .core("DatabaseClient"),
                 .external(name: "ComposableArchitecture"),
                 .target(name: "BeanTrackerWidgetExtension"),

@@ -62,9 +62,6 @@
 - `OnboardingFeature`
   - 앱 목적 소개
   - 첫 등록/첫 기록 유도
-- `SettingsFeature`
-  - 앱 설정 진입점
-  - 기타 앱 설정 진입점
 
 ### 5.3 Domain Layer
 
@@ -194,10 +191,6 @@ Feature에 바로 전달하기 좋은 값 객체를 둔다.
 
 - 소개 단계 또는 첫 원두 등록 유도 상태
 - 완료 여부
-
-`SettingsFeature.State`
-
-- 앱 설정 섹션 상태
 
 ### 8.3 의존성 규칙
 

@@ -61,7 +61,7 @@ Definition of done:
 
 ### Slice 3: Inventory Visual Pass
 
-Status: implemented, awaiting maintainer review/commit
+Status: committed in `29948a0`
 
 Scope:
 
@@ -77,7 +77,7 @@ Definition of done:
 
 ### Slice 4: Shared Polish
 
-Status: pending
+Status: in progress
 
 Scope:
 
@@ -90,6 +90,10 @@ Definition of done:
 - The three core screens feel visually coherent.
 - Any new shared helper stays within existing module boundaries or is documented if a new target is needed.
 - Focused build validation is attempted.
+
+Notes:
+
+- Settings tab and `SettingsFeature` were removed after the Figma-driven three-screen structure became the app target.
 
 ### Slice 5: Preview And Validation Follow-Up
 
@@ -107,7 +111,7 @@ Definition of done:
 
 ## Current Checkpoint
 
-Slice 3 is implemented. Stop here so the maintainer can review and commit before moving to Slice 4.
+Settings tab removal is implemented as a focused Slice 4 follow-up. Stop here so the maintainer can review and commit before continuing broader shared polish.
 
 Validation:
 

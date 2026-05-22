@@ -3,7 +3,6 @@ import ComposableArchitecture
 import DashboardFeature
 import InventoryFeature
 import OnboardingFeature
-import SettingsFeature
 import SwiftUI
 
 struct AppView: View {
@@ -49,16 +48,6 @@ struct AppView: View {
                         .tag(AppFeature.Tab.inventory)
                         .tabItem {
                             Label("원두 창고", systemImage: "shippingbox")
-                        }
-
-                        NavigationStack {
-                            SettingsView(
-                                store: store.scope(state: \.settings, action: \.settings)
-                            )
-                        }
-                        .tag(AppFeature.Tab.settings)
-                        .tabItem {
-                            Label("설정", systemImage: "gearshape")
                         }
                     }
                 } else {
