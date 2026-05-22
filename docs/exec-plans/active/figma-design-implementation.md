@@ -28,7 +28,7 @@ Bring the current SwiftUI app closer to the BeanTracker Figma design while keepi
 
 ### Slice 1: Dashboard Home Visual Pass
 
-Status: implemented, awaiting maintainer review/commit
+Status: committed in `a2197a8`
 
 Scope:
 
@@ -45,7 +45,7 @@ Definition of done:
 
 ### Slice 2: Brewing Visual Pass
 
-Status: pending
+Status: implemented, awaiting maintainer review/commit
 
 Scope:
 
@@ -107,11 +107,15 @@ Definition of done:
 
 ## Current Checkpoint
 
-Slice 1 is implemented. Stop here so the maintainer can review and commit before moving to Slice 2.
+Slice 2 is implemented. Stop here so the maintainer can review and commit before moving to Slice 3.
 
 Validation:
 
 - `scripts/check-harness` passed.
-- `scripts/build-app` was attempted, but the project-only build could not resolve workspace module dependencies.
+- `scripts/build-app` was attempted during Slice 1, but the project-only build could not resolve workspace module dependencies.
 - Equivalent workspace build passed with `CODE_SIGNING_ALLOWED=NO`:
   `xcodebuild -workspace BeanTracker.xcworkspace -scheme BeanTrackerApp -derivedDataPath .derivedData/codex/app -destination generic/platform=iOS CODE_SIGNING_ALLOWED=NO build`
+- Slice 2 validation passed:
+  - `scripts/check-harness`
+  - `git diff --check`
+  - `xcodebuild -workspace BeanTracker.xcworkspace -scheme BeanTrackerApp -derivedDataPath .derivedData/codex/app -destination generic/platform=iOS CODE_SIGNING_ALLOWED=NO build`
