@@ -28,7 +28,8 @@
 
 - Main app flow exists across app, feature, domain, and core modules.
 - The widget scaffold exists, including a quick link into the brewing flow.
-- `DatabaseClient.liveValue` is still in-memory, not SwiftData/CloudKit-backed yet.
+- `DatabaseClient.liveValue` uses a local SwiftData-backed store with no sample seed data.
+- CloudKit sync is not wired yet.
 - Only `CoffeeDomain` has automated tests checked in.
 - The repository now has a short `AGENTS.md` and standard scripts, but no CI yet.
 - `wiki/` is intentionally non-canonical and should not be used as agent context unless the repo docs explicitly point there.

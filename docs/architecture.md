@@ -27,14 +27,15 @@ BeanTracker is organized around a small app shell with feature modules, a pure d
 
 ## Current Implementation Reality
 
-- `DatabaseClient.liveValue` uses `InMemoryDatabase`, so persistence and sync behavior are still mocked at runtime.
+- `DatabaseClient.liveValue` uses a local SwiftData-backed store.
+- Runtime data now starts empty and persists locally across app launches.
+- `InMemoryDatabase` remains available for previews and tests.
 - The root app reducer coordinates onboarding, dashboard refreshes, brewing refreshes, and inventory refreshes.
 - Feature modules mostly use async client calls plus direct view state bindings.
 - The widget currently provides a quick deep link and a single preview.
 
 ## Known Gaps
 
-- No SwiftData-backed live adapter yet.
 - No CloudKit sync implementation yet.
 - No feature-level reducer tests.
 - Almost no feature previews despite the tech spec calling for them.
@@ -46,5 +47,5 @@ BeanTracker is organized around a small app shell with feature modules, a pure d
 
 1. Add reducer tests for each feature's primary happy path and edge state.
 2. Add representative previews for each feature using mock dependencies.
-3. Replace the in-memory live database with a real SwiftData adapter behind `DatabaseClient`.
+3. Add focused persistence adapter tests for the SwiftData-backed `DatabaseClient`.
 4. Add a repo-local UI smoke workflow and then promote it into CI.

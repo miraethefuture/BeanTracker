@@ -14,12 +14,29 @@ public struct DashboardFeature {
 
         public init(
             selectedMonth: Date = .now,
-            snapshot: DashboardSnapshot = CoffeeFixtures.sampleDashboardSnapshot(),
+            snapshot: DashboardSnapshot? = nil,
             isLoading: Bool = false
         ) {
             self.selectedMonth = selectedMonth
-            self.snapshot = snapshot
+            self.snapshot = snapshot ?? Self.emptySnapshot(month: selectedMonth)
             self.isLoading = isLoading
+        }
+
+        private static func emptySnapshot(month: Date) -> DashboardSnapshot {
+            let formatter = DateFormatter()
+            formatter.locale = Locale.current
+            formatter.dateFormat = "yyyy.MM"
+
+            return DashboardSnapshot(
+                month: month,
+                monthLabel: formatter.string(from: month),
+                monthlyCupCount: 0,
+                monthlyBeanUsage: 0,
+                monthlyPurchaseCost: 0,
+                currentBeanSummary: nil,
+                currentBeanStatus: nil,
+                chartEntries: []
+            )
         }
     }
 

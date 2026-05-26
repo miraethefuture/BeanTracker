@@ -41,7 +41,11 @@ public struct DatabaseClient: Sendable {
 
 extension DatabaseClient: DependencyKey {
     public static var liveValue: DatabaseClient {
-        .inMemory()
+        do {
+            return try .swiftData()
+        } catch {
+            fatalError("Failed to initialize SwiftData store: \(error)")
+        }
     }
 
     public static var previewValue: DatabaseClient {
@@ -93,6 +97,45 @@ public extension DependencyValues {
 }
 
 public extension DatabaseClient {
+    static func swiftData(
+        isStoredInMemoryOnly: Bool = false
+    ) throws -> DatabaseClient {
+        let database = try SwiftDataDatabase(isStoredInMemoryOnly: isStoredInMemoryOnly)
+
+        return DatabaseClient(
+            fetchDashboard: { month in
+                try await database.fetchDashboard(month: month)
+            },
+            fetchBrewingDefaults: {
+                try await database.fetchBrewingDefaults()
+            },
+            fetchInventory: {
+                try await database.fetchInventory()
+            },
+            fetchHasCompletedOnboarding: {
+                try await database.fetchHasCompletedOnboarding()
+            },
+            completeOnboarding: {
+                try await database.completeOnboarding()
+            },
+            saveBean: { bean in
+                try await database.saveBean(bean)
+            },
+            addBrewLog: { brewLog in
+                try await database.addBrewLog(brewLog)
+            },
+            deleteBean: { beanID in
+                try await database.deleteBean(id: beanID)
+            },
+            deleteBrewLog: { brewLogID in
+                try await database.deleteBrewLog(id: brewLogID)
+            },
+            setBeanExhausted: { beanID, isExhausted in
+                try await database.setBeanExhausted(id: beanID, isExhausted: isExhausted)
+            }
+        )
+    }
+
     static func inMemory(
         seed: InMemoryDatabase.Seed = .preview
     ) -> DatabaseClient {

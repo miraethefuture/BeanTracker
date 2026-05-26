@@ -77,7 +77,8 @@
 
 - `DatabaseClient`
   - SwiftData CRUD 추상화
-  - CloudKit 동기화 포함 Live 구현
+  - 로컬 SwiftData Live 구현
+  - CloudKit 동기화 확장 지점
   - Preview/Test용 Mock 구현
 - 필요 시 보조 모듈
   - `WidgetSupport`
@@ -226,11 +227,14 @@ struct DatabaseClient {
 ### 10.1 저장 전략
 
 - 로컬 우선 저장은 SwiftData로 처리한다.
+- 현재 live `DatabaseClient`는 샘플 seed 없이 로컬 SwiftData store를 사용한다.
+- Preview/Test에서는 fixture-backed in-memory 구현을 유지한다.
 - 같은 Apple ID 환경의 기기 간 동기화는 CloudKit으로 제공한다.
 - 오프라인에서도 기본 기능은 동작해야 한다.
 
 ### 10.2 동기화 기대 수준
 
+- 현재 구현 범위는 로컬 SwiftData persistence이며 CloudKit 동기화는 후속 작업이다.
 - 1.0에서는 동일 사용자 기기 간 동기화가 안정적으로 되면 충분하다.
 - 복잡한 협업 충돌 해결은 범위 밖이다.
 - 동기화 지연이 있더라도 앱은 로컬 기준으로 계속 사용할 수 있어야 한다.
@@ -322,16 +326,16 @@ Preview 속도는 이 프로젝트의 핵심 설계 목표다.
 - TCA Reducer 테스트
 - 필요 최소한의 persistence adapter 통합 테스트
 
-## 16. 현재 템플릿에서의 전환 순서
+## 16. 현재 전환 상태
 
-현재 프로젝트는 기본 SwiftData 템플릿 상태다. 권장 전환 순서는 다음과 같다.
+현재 프로젝트는 기본 SwiftData 템플릿을 벗어나 다음 기반을 갖춘 상태다.
 
-1. Tuist 구조 도입
-2. `CoffeeDomain` 분리
-3. `DatabaseClient` 도입
-4. 기본 `Item` 모델 제거 및 실제 모델 반영
-5. 온보딩/원두/추출/대시보드 Feature 구현
-6. 위젯, 다국어, CloudKit 검증
+1. Tuist 구조 도입 완료
+2. `CoffeeDomain` 분리 완료
+3. `DatabaseClient` 도입 완료
+4. 샘플 seed 없는 로컬 SwiftData live adapter 도입 완료
+5. 온보딩/원두/추출/대시보드 Feature 기본 구현 완료
+6. 위젯, 다국어, CloudKit 검증은 후속 작업
 
 ## 17. 1.0 완료 기준
 
