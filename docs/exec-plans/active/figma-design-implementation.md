@@ -83,6 +83,7 @@ Scope:
 
 - Consolidate repeated colors, card styles, and small typography helpers if duplication becomes meaningful.
 - Align tab labels and navigation titles with the Figma/product language.
+- Bring onboarding into the same warm background, card, typography, and CTA language as the redesigned core screens.
 - Avoid a new shared module unless the duplication clearly justifies project graph changes.
 
 Definition of done:
@@ -94,6 +95,7 @@ Definition of done:
 Notes:
 
 - Settings tab and `SettingsFeature` were removed after the Figma-driven three-screen structure became the app target.
+- Onboarding visual polish is being handled as part of the same shared-polish slice because it should match the redesigned core screens without changing reducer behavior.
 
 ### Slice 5: Preview And Validation Follow-Up
 
@@ -111,7 +113,7 @@ Definition of done:
 
 ## Current Checkpoint
 
-Settings tab removal is implemented as a focused Slice 4 follow-up. Stop here so the maintainer can review and commit before continuing broader shared polish.
+Onboarding visual polish is implemented as a focused Slice 4 follow-up. Stop here so the maintainer can review and commit before continuing broader shared polish.
 
 Validation:
 
