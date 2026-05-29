@@ -30,9 +30,9 @@ BeanTracker is organized around a small app shell with feature modules, a pure d
 - `DatabaseClient.liveValue` uses a local SwiftData-backed store.
 - Runtime data now starts empty and persists locally across app launches.
 - `InMemoryDatabase` remains available for previews and tests.
-- The root app reducer coordinates onboarding, dashboard refreshes, brewing refreshes, and inventory refreshes.
+- The root app reducer coordinates onboarding, dashboard refreshes, brewing refreshes, inventory refreshes, and widget brew deep-link routing.
 - Feature modules mostly use async client calls plus direct view state bindings.
-- The widget currently provides a quick deep link and a single preview.
+- The widget currently provides a small quick deep link into the brewing screen and a single preview.
 
 ## Known Gaps
 

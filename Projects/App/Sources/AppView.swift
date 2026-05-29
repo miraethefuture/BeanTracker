@@ -61,6 +61,9 @@ struct AppView: View {
             .task {
                 await viewStore.send(.task).finish()
             }
+            .onOpenURL { url in
+                viewStore.send(.openURL(url))
+            }
         }
     }
 }

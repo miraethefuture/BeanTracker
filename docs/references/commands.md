@@ -16,7 +16,7 @@ These are the standard local commands agents should prefer over ad-hoc shell seq
 - `scripts/test-domain`
   - Runs `CoffeeDomainTests` through `xcodebuild`.
 - `scripts/build-app`
-  - Builds `BeanTrackerApp` through `xcodebuild`.
+  - Builds `BeanTrackerApp` through `xcodebuild` with code signing disabled for local validation.
 
 ## Environment Variables
 

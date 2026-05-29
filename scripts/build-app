@@ -16,4 +16,5 @@ xcodebuild \
     -scheme "BeanTrackerApp" \
     -derivedDataPath "$RUN_DERIVED_DATA" \
     -destination "generic/platform=iOS" \
+    CODE_SIGNING_ALLOWED=NO \
     build
