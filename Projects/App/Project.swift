@@ -14,7 +14,7 @@ let project = Project(
             deploymentTargets: Constants.deploymentTargets,
             infoPlist: .extendingDefault(
                 with: [
-                    "CFBundleDisplayName": .string("BeanTracker"),
+                    "CFBundleDisplayName": .string("원두노트"),
                     "UILaunchScreen": .dictionary([:]),
                     "CFBundleURLTypes": .array([
                         .dictionary([
@@ -46,7 +46,7 @@ let project = Project(
             deploymentTargets: .iOS("17.0"),
             infoPlist: .extendingDefault(
                 with: [
-                    "CFBundleDisplayName": .string("BeanTracker Widget"),
+                    "CFBundleDisplayName": .string("원두노트 위젯"),
                     "NSExtension": .dictionary([
                         "NSExtensionPointIdentifier": .string("com.apple.widgetkit-extension")
                     ])

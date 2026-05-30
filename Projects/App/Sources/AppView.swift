@@ -12,7 +12,7 @@ struct AppView: View {
         WithViewStore(store, observe: { $0 }) { viewStore in
             Group {
                 if viewStore.isBootstrapping {
-                    ProgressView("BeanTracker 준비 중")
+                    ProgressView("원두노트 준비 중")
                 } else if viewStore.hasCompletedOnboarding {
                     TabView(
                         selection: viewStore.binding(

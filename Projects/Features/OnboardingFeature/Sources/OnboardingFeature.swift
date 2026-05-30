@@ -59,7 +59,7 @@ public struct OnboardingView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("BeanTracker")
+            Text("원두노트")
                 .font(.system(size: 24, weight: .bold, design: .rounded))
                 .foregroundStyle(OnboardingStyle.espresso)
 
@@ -94,7 +94,7 @@ public struct OnboardingView: View {
                     .background(OnboardingStyle.caramel, in: Circle())
             }
 
-            Text("BeanTracker는 원두별로 마신 누적 잔 수를 보여줍니다.")
+            Text("원두별로 마신 누적 잔 수를 보여줍니다.")
                 .font(.system(size: 14, weight: .medium))
                 .foregroundStyle(OnboardingStyle.pearl.opacity(0.82))
                 .lineSpacing(4)
