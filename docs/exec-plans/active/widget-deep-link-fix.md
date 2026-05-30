@@ -2,7 +2,7 @@
 
 Status: active
 Owner: repository
-Updated: 2026-05-29
+Updated: 2026-05-30
 
 ## Goal
 
@@ -42,12 +42,22 @@ Status: Completed
 - Update architecture notes for widget deep-link routing.
 - Run harness and app build validation.
 
+### Slice 4: Remove Internal Splash View
+
+Status: Completed
+
+- Remove the SwiftUI-managed splash view, holding view, splash state, and splash timing effects.
+- Keep the system `UILaunchScreen` app target configuration intact.
+- Preserve widget deep-link routing into the brewing tab.
+- Update architecture notes and run app build validation.
+
 ## Current Checkpoint
 
-Implementation and focused validation are complete. Stop here so the maintainer can review and commit before expanding widget behavior beyond deep linking.
+Internal splash removal and focused validation are complete. Stop here so the maintainer can review and commit before expanding widget behavior beyond deep linking.
 
 Validation:
 
 - `scripts/check-harness` passed.
 - `git diff --check` passed.
 - `scripts/build-app` passed.
+- During Slice 4, the first sandboxed `scripts/build-app` attempt failed while launching Swift macros under the sandbox. The same script passed when rerun outside the sandbox.
